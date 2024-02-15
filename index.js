@@ -1,5 +1,6 @@
 // server.js
 import authRoutes from './routes/authRoutes.js'
+import viewRoutes from './routes/viewRoutes.js'
 import dotenv from 'dotenv';
 dotenv.config();
 import express, { json } from 'express';
@@ -15,21 +16,21 @@ app.use(cors());
 
 
 // Placeholder for your database
-const users = [];
+app.use('/view', viewRoutes)
 
-  
+
   // Apply middleware to the '/view' route
-  app.get('/view/:uname', auth,async (req, res) => {
-    try{
-        const { uname } = req.params;
+//   app.get('/view/:uname', auth,async (req, res) => {
+//     try{
+//         const { uname } = req.params;
 
-        const userData =await Auth.findOne({username: uname}).exec();
-       return res.status(200).json(userData);
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send({ message: error.message});
-    }
-  });
+//         const userData =await Auth.findOne({username: uname}).exec();
+//        return res.status(200).json(userData);
+//     } catch (error) {
+//         console.log(error.message);
+//         res.status(500).send({ message: error.message});
+//     }
+//   });
 
 app.use('/', authRoutes);
 
