@@ -31,13 +31,11 @@ router.get('/:uname', auth,async (req, res) => {
     try{
         const { uname } = req.params;
 
-        const userData =await Order.findOne({username: uname}).exec();
+        const userData = await Order.find({ username: uname }).exec();
        return res.status(200).json(userData);
     } catch (error) {
         console.log(error.message);
         res.status(500).send({ message: error.message});
     }
   });
-
-  // const userData =await Auth.findOne({username: uname}).exec();
 export default router;
