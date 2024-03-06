@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
         }
         if (await bcrypt.compare(req.body.password, user.password)) {
             // Authentication successful
-            const accessToken = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+            const accessToken = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
             res.json({ accessToken: accessToken });
         } else {
             res.status(401).send('Incorrect password');

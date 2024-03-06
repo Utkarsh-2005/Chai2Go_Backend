@@ -26,6 +26,10 @@ const orderSchema = mongoose.Schema(
         quantity: {
             type:  String,
             required: true,
+        },
+        orderno: {
+            type: Number,
+            required: true,
         }
     },
     {
