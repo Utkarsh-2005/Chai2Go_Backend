@@ -8,6 +8,7 @@ import cors from 'cors';
 import auth from './middleware/verify.js';
 import { connect } from 'mongoose';
 import { Auth } from './models/authModel.js';
+import { Order } from "./models/orderModel.js";
 
 const app = express();
 
@@ -17,7 +18,15 @@ app.use(cors());
 
 // Placeholder for your database
 app.use('/view', viewRoutes)
-
+app.get('/ordernos', auth,async (req, res) => {
+    try{
+        const orders = await Order.find({}, 'orderno').exec();
+       return res.status(200).json(orders);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({ message: error.message});
+    }
+});
 
   // Apply middleware to the '/view' route
 //   app.get('/view/:uname', auth,async (req, res) => {
