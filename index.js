@@ -1,6 +1,7 @@
 // server.js
 import authRoutes from './routes/authRoutes.js'
 import viewRoutes from './routes/viewRoutes.js'
+import adminRoutes from './routes/adminRoutes.js'
 import dotenv from 'dotenv';
 dotenv.config();
 import express, { json } from 'express';
@@ -9,15 +10,34 @@ import auth from './middleware/verify.js';
 import { connect } from 'mongoose';
 import { Auth } from './models/authModel.js';
 import { Order } from "./models/orderModel.js";
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+
 
 const app = express();
+
+const server = createServer(app)
+
+// Initialize Socket.io
+const io = new Server(server, {
+    cors: {
+        origin:"http://localhost:5173",
+        methods:["GET","POST"],
+        credentials: true,
+    }
+})
+
+io.on("connection", (socket) => {
+    console.log("A new user has connected", socket.id)
+})
 
 app.use(json());
 app.use(cors());
 
 
 // Placeholder for your database
-app.use('/view', viewRoutes)
+app.use('/view', viewRoutes(io));
+app.use('/admin', adminRoutes(io));
 app.get('/ordernos', auth,async (req, res) => {
     try{
         const orders = await Order.find({}, 'orderno').exec();
@@ -28,70 +48,15 @@ app.get('/ordernos', auth,async (req, res) => {
     }
 });
 
-  // Apply middleware to the '/view' route
-//   app.get('/view/:uname', auth,async (req, res) => {
-//     try{
-//         const { uname } = req.params;
-
-//         const userData =await Auth.findOne({username: uname}).exec();
-//        return res.status(200).json(userData);
-//     } catch (error) {
-//         console.log(error.message);
-//         res.status(500).send({ message: error.message});
-//     }
-//   });
-
 app.use('/', authRoutes);
-
-// app.get('/view', (req, res) => {
-//     res.send(users);
-// })
-// Register endpoint
-// app.post('/register', async (req, res) => {
-//     try {
-//         const existingUser = users.find(user => user.username === req.body.username);
-//         if (existingUser) {
-//             return res.status(400).send('User already exists');
-//         }
-//         // Hash password
-//         const hashedPassword = await bcrypt.hash(req.body.password, 10);
-//         const user = { username: req.body.username, password: hashedPassword };
-//         users.push(user);
-//         res.status(201).send();
-//     } catch {
-//         res.status(500).send();
-//     }
-// });
-
-// // Login endpoint
-// app.post('/login', async (req, res) => {
-//     const user = users.find(user => user.username === req.body.username);
-//     if (user == null) {
-//         return res.status(400).send('Cannot find user');
-//     }
-//     try {
-//         if (await bcrypt.compare(req.body.password, user.password)) {
-//             // Authentication successful
-//             const accessToken = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
-            
-//             res.json({ accessToken: accessToken });
-
-//         } else {
-//             res.status(401).send('Incorrect password');
-//             console.log(username)
-//         }
-//     } catch {
-//         res.status(500).send();
-//     }
-// });
-
 
 connect(process.env.mongoDBURL).then(
     ()=>{
         console.log("successfully connected")
-        app.listen(process.env.PORT, () => {
+        server.listen(process.env.PORT, () => {
             console.log(`app is listeninng on port ${process.env.PORT}`);
         });
     }).catch((error)=> {
         console.log(error)
     });
+ 
