@@ -19,6 +19,7 @@
     "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
+    "mongoose": "^8.2.1",
     "socket.io": "^4.7.4"
   },
   "devDependencies": {
