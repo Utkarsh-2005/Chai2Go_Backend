@@ -43,7 +43,7 @@ export default function(adminIO) {
             // if (!result) {
             //     return res.status(404).json({ message: 'Order not found' });
             // }
-            adminIO.emit('order_confirmed', {id: id, orderno: ordernum, message: req.body.message});
+            adminIO.emit('order_confirmed', {id: id, orderno: ordernum, message: req.body.message, username: req.body.username});
             res.status(200);
         } catch (error) {
             console.log(error);
