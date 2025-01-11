@@ -37,12 +37,20 @@ export default function(adminIO) {
         }
     });
 
-    router.post('/message/:id', auth, (req, res) => {
+    router.post('/message/:id', auth, async (req, res) => {
         try{
             const { id } = req.params;
             // if (!result) {
             //     return res.status(404).json({ message: 'Order not found' });
             // }
+            const notification = new Notification({
+                id: id,
+                orderno: ordernum,
+                message: req.body.message,
+                username: req.body.username
+              });
+          
+              await notification.save();
             adminIO.emit('order_confirmed', {id: id, orderno: ordernum, message: req.body.message, username: req.body.username});
             res.status(200).send({ message: 'Success' });
         } catch (error) {
