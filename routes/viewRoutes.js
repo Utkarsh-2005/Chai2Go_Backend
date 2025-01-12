@@ -73,9 +73,9 @@ router.delete('/delete/:id', auth, async (req, res) => {
 }
 })
 
-router.get('/notifications', auth, async (req, res) => {
+router.get('/notifications/:uname', auth, async (req, res) => {
     try {
-      const { username } = req.user.username; // Assuming username is in the token
+      const { username } = req.params; // Assuming username is in the token
       const notifications = await Notification.find({ username, isRead: false });
       res.status(200).json({ notifications });
     } catch (error) {
