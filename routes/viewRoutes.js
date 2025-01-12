@@ -84,6 +84,25 @@ router.get('/notifications/:uname', auth, async (req, res) => {
       res.status(500).send({ message: error.message });
     }
   });
+
+
+router.delete('/notifications/:orderno', async (req, res) => {
+    try {
+      const { orderno } = req.params;
+      
+      // Find and delete the notification with the matching `orderno`
+      const deletedNotification = await Notification.findOneAndDelete({ orderno: orderno });
+      
+      if (!deletedNotification) {
+        return res.status(404).json({ message: 'Notification not found' });
+      }
+  
+      res.status(200).json({ message: 'Notification deleted successfully', notification: deletedNotification });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    }
+  });
   
   
  return router;
